@@ -12,3 +12,7 @@ First, you must edit the `db-info.php` file. You should only need to change `$db
 To initiate the backup and merging, run `php merge.php` (as on Dec. 20th, 2015).
 
 To restore the regular schedule, run `php restore.php` (as on Dec. 28th, 2015).
+
+## Limitations
+
+The merge script relies on the fact that it is only expected to operate on the dates 21-27 December, 2015, which correspond directly to schedule days 1-7 (Monday - Sunday).
