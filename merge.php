@@ -9,7 +9,7 @@ try
     $db = new PDO($dsn, $username, $password, $options);
 
     ########
-    # clone / backup vendor_schedule
+    # clone / backup vendor schedule
 
     # delete backup table, if it already exists
     $db->query("DROP TABLE IF EXISTS `" . $backupTableName . "`");
@@ -25,13 +25,13 @@ try
 
 
     ########
-    # overwrite vendor_schedule w/ special_day changes
+    # overwrite vendor schedule w/ special day changes
 
     echo "Merging special days. Please be patient...\n";
 
     $vendorStatement = $db->query("SELECT id FROM " . $vendor);
     while ($vendorRow = $vendorStatement->fetch(PDO::FETCH_ASSOC)) {
-        # translate special_day to vendor_schedule format using SpecialDayObj
+        # translate special day to vendor schedule format using SpecialDayObj
         
         $specialStatement = $db->query("SELECT * FROM " . $specialDay . " WHERE vendor_id=" . $vendorRow['id']);
         $specialOne = new SpecialDayObj($specialStatement);
@@ -73,44 +73,21 @@ catch (Exception $e)
 
 
 
+# last digit of 'special_date' => 'weekday'
 #    M  T  W  Th F  Sa Su
 #    1  2  3  4  5  6  7
-
-    # last digit of 'special_date' => 'weekday'
 
 /* PROCEDURE - per vendor:
     1) assemble special days into object
         [for vendor N] SpecialDayObj - contains all special days for vendor N
-        methods to check for 
-    2) for each day of week (1-7), if special entry exists:
+    2) for each day of the week (1-7), if any special entry exists:
         - delete all entries for that day in vendor_schedule
         - insert special day entries into vendor_schedule
-
 */
 
-
-# overwrite vendor_schedule w/ special_day changes
-#   if there is ANY entry on a special day, remove ALL of the regular schedule for that day
-
-
-
-
-########
 class SpecialDayObj
 {
     protected $days = array();
-
-    # take result of DB query "SELECT * FROM $specialDay WHERE 'vendor_id'=N"
-    # array(7) { 
-    #   ["id"]=> string(1) "1"
-    #   ["vendor_id"]=> string(1) "1"
-    #   ["special_date"]=> string(10) "2015-12-24"
-    #   ["event_type"]=> string(6) "closed" / "opened"
-    #   ["all_day"]=> string(1) "1"
-    #   ["start_hour"]=> NULL
-    #   ["stop_hour"]=> NULL
-    # }
-    # Array ( [id] => 1 [vendor_id] => 1 [weekday] => 2 [all_day] => 0 [start_hour] => 19:00:00 [stop_hour] => 22:00:00 )
 
     public function __construct($dbResult)
     {
