@@ -101,7 +101,7 @@ class SpecialDayObj
                 'start_hour' => $row['start_hour'],
                 'stop_hour' => $row['stop_hour']
             );
-            if ($this->days[$specialEntry['weekday']]) {
+            if (isset($this->days[$specialEntry['weekday']])) {
                 array_push($this->days[$specialEntry['weekday']], $specialEntry);
             }
             else {
@@ -117,6 +117,6 @@ class SpecialDayObj
 
     public function getDay($n)
     {
-        return $this->days[$n];
+        return isset($this->days[$n]) ? $this->days[$n] : false;
     }
 }
